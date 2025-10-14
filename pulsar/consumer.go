@@ -75,6 +75,14 @@ type DLQPolicy struct {
 	// DeadLetterTopic specifies the name of the topic where the failing messages will be sent.
 	DeadLetterTopic string
 
+	// DeadLetterTopicProducerName specifies a name for the producer specifically for the DLQ topic.
+	// If not assigned, the system will generate a globally unique name which can be access with
+	// Producer.ProducerName().
+	// When specifying a name, it is up to the user to ensure that, for a given topic, the producer name is unique
+	// across all Pulsar's clusters. Brokers will enforce that only a single producer a given name can be publishing on
+	// a topic.
+	DeadLetterTopicProducerName string
+
 	// ProducerOptions is the producer options to produce messages to the DLQ and RLQ topic
 	ProducerOptions ProducerOptions
 
@@ -182,6 +190,11 @@ type ConsumerOptions struct {
 	// NackRedeliveryDelay specifies the delay after which to redeliver the messages that failed to be
 	// processed. Default is 1 min. (See `Consumer.Nack()`)
 	NackRedeliveryDelay time.Duration
+
+	// NackPrecisionBit specifies the precision bit for nack redelivery delay.
+	// This is used to trim the lower bits of the nack redelivery delay to reduce memory usage.
+	// Default is 8 bits.
+	NackPrecisionBit *int64
 
 	// Name specifies the consumer name.
 	Name string
